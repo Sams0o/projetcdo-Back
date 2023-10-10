@@ -33,3 +33,6 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# pour que le mot de passe ne soit pas dévoilé
+.env
