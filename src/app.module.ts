@@ -9,10 +9,11 @@ import { ExperiencesModule } from './experiences/experiences.module';
 import { CountriesModule } from './countries/countries.module';
 import { ContinentsModule } from './continents/continents.module';
 import { CategoriesModule } from './categories/categories.module';
-import { ClassifyModule } from './classify/classify.module';
-import { AssociateModule } from './associate/associate.module';
 import { User } from './users/entities/user.entity';
 import { Experience } from './experiences/entities/experience.entity';
+import { Country } from './countries/entities/country.entity';
+import { Continent } from './continents/entities/continent.entity';
+import { Category } from './categories/entities/category.entity';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { Experience } from './experiences/entities/experience.entity';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      entities: [User, Experience],
+      entities: [User, Experience, Country, Continent, Category],
       synchronize: false,
     }),
     AuthModule,
@@ -33,8 +34,6 @@ import { Experience } from './experiences/entities/experience.entity';
     CountriesModule,
     ContinentsModule,
     CategoriesModule,
-    ClassifyModule,
-    AssociateModule,
   ],
   controllers: [AppController],
   providers: [AppService],

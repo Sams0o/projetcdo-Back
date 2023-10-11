@@ -27,6 +27,6 @@ export class User {
   @Column({ nullable: false })
   admin: boolean;
 
-  @OneToMany(() => Experience, (experience) => experience.user, {eager:true})
+  @OneToMany(() => Experience, (experience) => experience.user.id, {eager:true})
   experiences: Experience[];
 }
