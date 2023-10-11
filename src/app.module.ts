@@ -11,6 +11,8 @@ import { ContinentsModule } from './continents/continents.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ClassifyModule } from './classify/classify.module';
 import { AssociateModule } from './associate/associate.module';
+import { User } from './users/entities/user.entity';
+import { Experience } from './experiences/entities/experience.entity';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { AssociateModule } from './associate/associate.module';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      entities: [],
+      entities: [User, Experience],
       synchronize: false,
     }),
     AuthModule,

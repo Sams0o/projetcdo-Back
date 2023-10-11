@@ -1,9 +1,70 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
+import * as bcrypt from 'bcrypt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { Repository } from 'typeorm';
+import { LoginDto } from './dto/login.dto';
+import { JwtService } from '@nestjs/jwt';
+
 
 @Injectable()
 export class AuthService {
-  register(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+    private jwtService: JwtService,
+  ) {}
+
+  async register(createAuthDto: CreateAuthDto) {
+    const { first_name, last_name, pseudo, biography, email, password, admin } =
+      createAuthDto;
+
+    // hashage du mot de passe
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // création d'une entité user
+    const user = this.usersRepository.create({
+      first_name,
+      last_name,
+      pseudo,
+      biography,
+      email,
+      password: hashedPassword,
+      admin: false,
+    });
+    console.log('test sauvegarde user', user);
+
+    try {
+      console.log('user', user);
+      // enregistrement de l'entité user
+      const createdUser = await this.usersRepository.save(user);
+      delete createdUser.password;
+      console.log('oooooo', createdUser);
+      return createdUser;
+    } catch (error) {
+      // gestion des erreurs
+      if (error.code === '23505') {
+        throw new ConflictException('Cette email est déjà utilisée.');
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
+  }
+
+  async login(loginDto: LoginDto) {
+    const { email, password } = loginDto;
+    const user = await this.usersRepository.findOneBy({ email });
+
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const payload = { sub: user.id };
+      const accessToken = await this.jwtService.sign(payload);
+      return { accessToken };
+    } else {
+      throw new UnauthorizedException(
+        'Ces identifiants ne sont pas reconnus.',
+      );
+    }
   }
 }

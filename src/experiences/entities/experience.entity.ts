@@ -20,10 +20,10 @@ export class Experience {
     default: () => 'CURRENT_TIMESTAMP',
     nullable: false,
   })
-  date_of_publication: Date;
+  publication_date: Date;
 
   @Column({ nullable: false })
-  date_of_travel: Date;
+  travel_date: Date;
 
   @ManyToOne(() => User, (user) => user.experiences)
   user: User;
