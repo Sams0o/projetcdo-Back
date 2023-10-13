@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt, IsNotEmpty, IsPositive, IsString } from "class-validator";
+import { IsInt, IsNotEmpty, IsPositive, IsString, Max, Min } from "class-validator";
 
 export class CreateCountryDto {
   @ApiProperty()
@@ -11,5 +11,7 @@ export class CreateCountryDto {
   @IsNotEmpty()
   @IsInt()
   @IsPositive()
+  @Min(1)
+  @Max(6)
   continent_id: number;
 }

@@ -1,3 +1,4 @@
+import { Exclude } from "class-transformer";
 import { Experience } from "src/experiences/entities/experience.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -22,11 +23,12 @@ export class User {
   email: string;
 
   @Column({ nullable: false })
+  @Exclude()
   password: string;
 
   @Column({ nullable: false })
   admin: boolean;
 
-  @OneToMany(() => Experience, (experience) => experience.user.id, {eager:true})
+  @OneToMany(() => Experience, (experience) => experience.user, {eager:true})
   experiences: Experience[];
 }

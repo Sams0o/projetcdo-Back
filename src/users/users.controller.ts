@@ -1,4 +1,4 @@
-import { Controller, Get, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete, UseGuards, Request, Put, UseInterceptors, ClassSerializerInterceptor, ForbiddenException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -9,21 +9,48 @@ import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
 @ApiTags('Users Controller')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @UseGuards(AuthGuard('jwt')) //pour que l'utilisateur puisse accéder à son profil
+  @UseGuards(AuthGuard('jwt'))
   findOne(@GetUser() user: User) {
-    // findOne(@Request() req) {
-    //   const userId = req.user.id;
-    //   console.log(typeof userId);
-      
+    console.log(user);
+
     return this.usersService.findOne(user.id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @UseGuards(AuthGuard('jwt'))
+  update(
+    @Param('id') id: number,
+    @Body() updateUserDto: UpdateUserDto,
+    @GetUser() user: User,
+  ): Promise<User> {
+    return this.usersService.update(user.id, id, updateUserDto);
   }
+
+  @Delete()
+  @UseGuards(AuthGuard('jwt'))
+  deleteUser( @GetUser() user: User) {
+    console.log(user);
+    const userId = user.id
+
+    return this.usersService.deleteUser(+userId);
+  }
+
+  // @Delete(':id')
+  // @UseGuards(AuthGuard('jwt'))
+  // deleteUser(@Param('id') id: number, @GetUser() user: User) {
+  //   console.log(user);
+
+  //   // Valider si l'utilisateur connecté a le droit de supprimer ce compte
+  //   if (user.id !== id) {
+  //     throw new ForbiddenException(
+  //       'Vous n’avez pas les droits pour supprimer ce compte.',
+  //     );
+  //   }
+  //   return this.usersService.deleteUser(id);
+  // }
 }

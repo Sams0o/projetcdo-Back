@@ -1,26 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { CreateContinentDto } from './dto/create-continent.dto';
-import { UpdateContinentDto } from './dto/update-continent.dto';
+import { Continent } from './entities/continent.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ContinentsService {
-  create(createContinentDto: CreateContinentDto) {
-    return 'This action adds a new continent';
-  }
+  constructor(
+    @InjectRepository(Continent)
+    private restrictionsRepository: Repository<Continent>,
+  ) {}
 
   findAll() {
-    return `This action returns all continents`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} continent`;
-  }
-
-  update(id: number, updateContinentDto: UpdateContinentDto) {
-    return `This action updates a #${id} continent`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} continent`;
+    return this.restrictionsRepository.find();
   }
 }

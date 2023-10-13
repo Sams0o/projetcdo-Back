@@ -1,5 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt, IsNotEmpty, IsPositive, IsString, isNotEmpty } from "class-validator";
+import { Type } from "class-transformer";
+import { ArrayNotEmpty, IsArray, IsISO8601, IsNotEmpty, IsString, ValidateNested } from "class-validator";
+import { CategoryDto } from "src/categories/dto/category.dto";
+import { CountryDto } from "src/countries/dto/country.dto";
+import { Country } from "src/countries/entities/country.entity";
+import { Category } from "src/categories/entities/category.entity";
 
 export class CreateExperienceDto {
   @ApiProperty()
@@ -18,15 +23,26 @@ export class CreateExperienceDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  publication_date: string;
+  @IsISO8601({ strict: true })
+  publication_date: Date;
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsISO8601({ strict: true })
   travel_date: Date;
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsInt()
-  @IsPositive()
-  user_id: number;
+  @ArrayNotEmpty()
+  @IsArray()
+  @ValidateNested({ each: true }) // Valide chaque élément du tableau
+  @Type(() => CountryDto)
+  countries: Country[];
+
+  @ApiProperty()
+  @ArrayNotEmpty()
+  @IsArray()
+  @ValidateNested({ each: true }) // Valide chaque élément du tableau
+  @Type(() => CategoryDto)
+  categories: Category[];
 }
+

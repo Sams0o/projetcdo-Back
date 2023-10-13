@@ -24,7 +24,8 @@ export class Experience {
   })
   publication_date: Date;
 
-  @Column({ nullable: false })
+  @Column({ 
+    nullable: false })
   travel_date: Date;
 
   @Column({ nullable: false, type: 'int' })
@@ -42,7 +43,7 @@ export class Experience {
     joinColumn: { name: 'experience_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'category_id', referencedColumnName: 'id' },
   })
-  categories: Category;
+  categories: Category[];
 
   @ManyToMany(() => Country, (country) => country.experiences, {
     eager: true,

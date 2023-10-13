@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,26 +9,80 @@ import { Repository } from 'typeorm';
 export class ExperiencesService {
   constructor(
     @InjectRepository(Experience)
-    private experiencesRepository: Repository<Experience>
-  ){}
+    private experiencesRepository: Repository<Experience>,
+  ) {}
 
-  async create(createExperienceDto: CreateExperienceDto) {
-    return 'This action adds a new experience';
+  async create(
+    createExperienceDto: CreateExperienceDto, user_id: number,): Promise<Experience> {
+    const experience = this.experiencesRepository.create(createExperienceDto);
+    experience.user_id = user_id;
+    const result = await this.experiencesRepository.save(experience);
+    return result;
   }
 
-  findAll() {
-    return `This action returns all experiences`;
+  async findExperienceByIdUser(user_id: number): Promise<Experience[]> {
+    const found = await this.experiencesRepository.find({ where: { user_id } });
+
+    if (!found) {
+      throw new NotFoundException(
+        `Aucune experience n'a été retrouvé pour cet utilisateur.`,
+      );
+    }
+    return found;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} experience`;
+  async findOne(experienceId: number) {
+    const found = await this.experiencesRepository.findOne({
+      where: { id: experienceId },
+    });
+    if (!found) {
+      throw new NotFoundException(
+        `L'expérience avec l'ID ${experienceId} n'existe pas.`,
+      );
+    }
+    return found;
   }
 
-  update(id: number, updateExperienceDto: UpdateExperienceDto) {
-    return `This action updates a #${id} experience`;
+  async update(
+    experienceId: number,
+    updateExperienceDto: UpdateExperienceDto,
+    userId: number,
+  ) {
+    console.log('User ID:', userId);
+    const experience = await this.findOne(experienceId);
+
+    if (experience.user_id !== userId) {
+      throw new ForbiddenException(
+        `Vous n'avez pas les droits pour modifier cette expérience.`,
+      );
+    }
+
+    if (updateExperienceDto.countries) {
+      experience.countries = updateExperienceDto.countries;
+    }
+
+    if (updateExperienceDto.categories) {
+      experience.categories = updateExperienceDto.categories;
+    }
+    const updatedExperience = this.experiencesRepository.merge(
+      experience,
+      updateExperienceDto,
+    );
+    const result = await this.experiencesRepository.save(updatedExperience);
+    return result;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} experience`;
+  async remove(experienceId: number, userId: number) {
+    const experience = await this.experiencesRepository.findOne({
+      where: { id: experienceId },
+    });
+
+    if (experience.user_id !== userId) {
+      throw new ForbiddenException(
+        `Vous n'avez pas les droits pour supprimer cette expérience.`,
+      );
+    }
+
+    return this.experiencesRepository.remove(experience);
   }
 }
