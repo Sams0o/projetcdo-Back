@@ -14,6 +14,8 @@ import { Experience } from './experiences/entities/experience.entity';
 import { Country } from './countries/entities/country.entity';
 import { Continent } from './continents/entities/continent.entity';
 import { Category } from './categories/entities/category.entity';
+import { PicturesModule } from './pictures/pictures.module';
+import { Picture } from './pictures/entities/picture.entity';
 
 @Module({
   imports: [
@@ -25,8 +27,9 @@ import { Category } from './categories/entities/category.entity';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
-      entities: [User, Experience, Country, Continent, Category],
+      entities: [User, Experience, Country, Continent, Category, Picture],
       synchronize: false,
+      logging: true,
     }),
     AuthModule,
     UsersModule,
@@ -34,9 +37,9 @@ import { Category } from './categories/entities/category.entity';
     CountriesModule,
     ContinentsModule,
     CategoriesModule,
+    PicturesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule{}
-
+export class AppModule {}

@@ -13,7 +13,7 @@ export class Country {
   @Column({ nullable: false, type: 'int' })
   continent_id: number;
 
-  @ManyToOne(() => Continent, (continent) => continent.countries)
+  @ManyToOne(() => Continent, (continent) => continent.countries, {eager:true})
   @JoinColumn({ name: 'continent_id'})
   continents: Continent;
 

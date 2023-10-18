@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Continent } from './entities/continent.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -7,10 +7,22 @@ import { Repository } from 'typeorm';
 export class ContinentsService {
   constructor(
     @InjectRepository(Continent)
-    private restrictionsRepository: Repository<Continent>,
+    private continentsRepository: Repository<Continent>,
   ) {}
 
   findAll() {
-    return this.restrictionsRepository.find();
+    return this.continentsRepository.find();
+  }
+
+  async findOne(continentId: number) {
+    const found = await this.continentsRepository.findOne({
+      where: { id: continentId },
+    });
+    if (!found) {
+      throw new NotFoundException(
+        `Le continent avec l'ID ${continentId} n'existe pas.`,
+      );
+    }
+    return found;
   }
 }

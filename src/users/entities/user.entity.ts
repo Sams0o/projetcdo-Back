@@ -1,5 +1,6 @@
 import { Exclude } from "class-transformer";
 import { Experience } from "src/experiences/entities/experience.entity";
+import { Picture } from "src/pictures/entities/picture.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
@@ -29,6 +30,9 @@ export class User {
   @Column({ nullable: false })
   admin: boolean;
 
-  @OneToMany(() => Experience, (experience) => experience.user, {eager:true})
+  @OneToMany(() => Experience, (experience) => experience.user, { eager: true })
   experiences: Experience[];
+
+  @OneToMany(() => Picture, (picture) => picture.user)
+  pictures: Experience[];
 }

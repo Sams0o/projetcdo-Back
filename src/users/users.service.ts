@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -10,13 +14,16 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    @InjectRepository(Experience) 
+    @InjectRepository(Experience)
     private experiencesRepository: Repository<Experience>,
   ) {}
 
   async findOne(id: number) {
     console.log('Méthode findOne appelée avec l’ID:', id);
-    const found = await this.usersRepository.findOne({ where: { id: id }, relations: ['experiences'] });
+    const found = await this.usersRepository.findOne({
+      where: { id: id },
+      relations: ['experiences'],
+    });
     console.log('Résultat de la requête findOne:', found);
 
     if (!found) {
@@ -45,6 +52,7 @@ export class UsersService {
         `L'utilisateur avec l'ID ${id} n'existe pas.`,
       );
     }
+    updateUserDto.admin = false;
 
     const updatedUser = this.usersRepository.merge(user, updateUserDto);
     return await this.usersRepository.save(updatedUser);
@@ -52,9 +60,9 @@ export class UsersService {
 
   async deleteUser(id: number) {
     const user = await this.usersRepository.findOne({
-      where: {id: id}, 
-      relations: ['experiences'], 
-  });
+      where: { id: id },
+      relations: ['experiences', 'pictures'],
+    });
     if (!user) {
       throw new NotFoundException(`Utilisateur avec l'ID ${id} non trouvé`);
     }

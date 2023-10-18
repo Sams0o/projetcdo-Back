@@ -1,7 +1,8 @@
 import { Category } from "src/categories/entities/category.entity";
 import { Country } from "src/countries/entities/country.entity";
+import { Picture } from "src/pictures/entities/picture.entity";
 import { User } from "src/users/entities/user.entity";
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Experience {
@@ -24,16 +25,28 @@ export class Experience {
   })
   publication_date: Date;
 
-  @Column({ 
-    nullable: false })
+  @Column({
+    nullable: false,
+  })
   travel_date: Date;
 
   @Column({ nullable: false, type: 'int' })
   user_id: number;
 
+  @OneToMany(() => Picture, (picture) => picture.experiences)
+  pictures: Picture[];
+
   @ManyToOne(() => User, (user) => user.experiences)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @ManyToMany(() => User, (user) => user.experiences)
+  @JoinTable({
+    name: 'likes',
+    joinColumn: { name: 'experience_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' },
+  })
+  users: User[];
 
   @ManyToMany(() => Category, (category) => category.experiences, {
     eager: true,

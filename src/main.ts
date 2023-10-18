@@ -5,7 +5,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  //  Permet d'utiliser cors pour lier front et back
+  app.enableCors();
   // Ajoute le préfixe api à l'adresse localhost:3000
   app.setGlobalPrefix('api');
 
@@ -21,9 +22,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
-
-  //  Permet d'utiliser cors pour lier front et back
-  app.enableCors();
 
   await app.listen(3000);
 }

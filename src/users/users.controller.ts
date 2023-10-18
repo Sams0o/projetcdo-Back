@@ -1,11 +1,23 @@
-import { Controller, Get, Body, Patch, Param, Delete, UseGuards, Request, Put, UseInterceptors, ClassSerializerInterceptor, ForbiddenException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+  Put,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  ForbiddenException,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { AuthGuard } from '@nestjs/passport';
-
 
 @Controller('users')
 @ApiTags('Users Controller')
@@ -24,18 +36,21 @@ export class UsersController {
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'))
   update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
     @GetUser() user: User,
   ): Promise<User> {
-    return this.usersService.update(user.id, id, updateUserDto);
+    console.log("USER ID", user.id);
+    console.log("ID", id);
+
+    return this.usersService.update(user.id, +id, updateUserDto);
   }
 
   @Delete()
   @UseGuards(AuthGuard('jwt'))
-  deleteUser( @GetUser() user: User) {
+  deleteUser(@GetUser() user: User) {
     console.log(user);
-    const userId = user.id
+    const userId = user.id;
 
     return this.usersService.deleteUser(+userId);
   }
