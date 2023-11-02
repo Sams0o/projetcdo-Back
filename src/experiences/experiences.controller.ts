@@ -30,6 +30,11 @@ export class ExperiencesController {
     return this.experiencesService.findExperienceByIdUser(user.id);
   }
 
+  @Get('all')
+  findAll() {
+    return this.experiencesService.findAll();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.experiencesService.findOne(+id);

@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,7 +11,6 @@ import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
-
 
 @Injectable()
 export class AuthService {
@@ -62,9 +66,17 @@ export class AuthService {
       const accessToken = await this.jwtService.sign(payload);
       return { accessToken };
     } else {
-      throw new UnauthorizedException(
-        'Ces identifiants ne sont pas reconnus.',
-      );
+      throw new UnauthorizedException("L'authentification a échoué.");
     }
+  }
+  async getUserById(user: User) {
+    const userId = user.id;
+    const userDetails = await this.usersRepository.findOne({
+      where: { id: userId },
+    });
+    delete userDetails.admin;
+    delete userDetails.password;
+    delete userDetails.id;
+    return userDetails;
   }
 }

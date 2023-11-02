@@ -31,6 +31,10 @@ export class ExperiencesService {
     return found;
   }
 
+    findAll() {
+    return this.experiencesRepository.find();
+  }
+
   async findOne(experienceId: number) {
     const found = await this.experiencesRepository.findOne({
       where: { id: experienceId },
