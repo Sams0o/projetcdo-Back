@@ -21,10 +21,10 @@ export class CreateExperienceDto {
   @IsString()
   city: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsISO8601({ strict: true })
-  publication_date: Date;
+  // @ApiProperty()
+  // @IsNotEmpty()
+  // @IsISO8601({ strict: true })
+  // publication_date: Date;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -43,6 +43,6 @@ export class CreateExperienceDto {
   @IsArray()
   @ValidateNested({ each: true }) // Valide chaque élément du tableau
   @Type(() => CategoryDto)
-  categories: Category[];
+  categories: Category;
 }
 

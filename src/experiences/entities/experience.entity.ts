@@ -56,7 +56,7 @@ export class Experience {
     joinColumn: { name: 'experience_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'category_id', referencedColumnName: 'id' },
   })
-  categories: Category[];
+  categories: Category;
 
   @ManyToMany(() => Country, (country) => country.experiences, {
     eager: true,

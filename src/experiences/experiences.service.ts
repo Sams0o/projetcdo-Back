@@ -14,6 +14,8 @@ export class ExperiencesService {
 
   async create(
     createExperienceDto: CreateExperienceDto, user_id: number,): Promise<Experience> {
+      console.log('async create (nestjs):', createExperienceDto);
+      
     const experience = this.experiencesRepository.create(createExperienceDto);
     experience.user_id = user_id;
     const result = await this.experiencesRepository.save(experience);
