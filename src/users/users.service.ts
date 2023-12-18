@@ -19,12 +19,10 @@ export class UsersService {
   ) {}
 
   async findOne(id: number) {
-    console.log('Méthode findOne appelée avec l’ID:', id);
     const found = await this.usersRepository.findOne({
       where: { id: id },
       relations: ['experiences'],
     });
-    console.log('Résultat de la requête findOne:', found);
 
     if (!found) {
       throw new NotFoundException(

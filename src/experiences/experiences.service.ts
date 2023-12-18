@@ -4,18 +4,22 @@ import { UpdateExperienceDto } from './dto/update-experience.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Experience } from './entities/experience.entity';
 import { Repository } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class ExperiencesService {
   constructor(
     @InjectRepository(Experience)
     private experiencesRepository: Repository<Experience>,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
   ) {}
 
   async create(
-    createExperienceDto: CreateExperienceDto, user_id: number,): Promise<Experience> {
-      console.log('async create (nestjs):', createExperienceDto);
-      
+    createExperienceDto: CreateExperienceDto,
+    user_id: number,
+  ): Promise<Experience> {
+
     const experience = this.experiencesRepository.create(createExperienceDto);
     experience.user_id = user_id;
     const result = await this.experiencesRepository.save(experience);
@@ -33,7 +37,7 @@ export class ExperiencesService {
     return found;
   }
 
-    findAll() {
+  findAll() {
     return this.experiencesRepository.find();
   }
 
@@ -54,7 +58,6 @@ export class ExperiencesService {
     updateExperienceDto: UpdateExperienceDto,
     userId: number,
   ) {
-    console.log('User ID:', userId);
     const experience = await this.findOne(experienceId);
 
     if (experience.user_id !== userId) {
@@ -74,8 +77,8 @@ export class ExperiencesService {
       experience,
       updateExperienceDto,
     );
-    const result = await this.experiencesRepository.save(updatedExperience);
-    return result;
+    const result = await this.experiencesRepository.save(updatedExperience); // sans eager
+    return await this.findOne(result.id);
   }
 
   async remove(experienceId: number, userId: number) {
@@ -83,7 +86,9 @@ export class ExperiencesService {
       where: { id: experienceId },
     });
 
-    if (experience.user_id !== userId) {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+
+    if (experience.user_id !== userId && !user.admin) {
       throw new ForbiddenException(
         `Vous n'avez pas les droits pour supprimer cette expérience.`,
       );

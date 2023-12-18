@@ -7,7 +7,6 @@ import {
   Delete,
   UseGuards,
   Request,
-  Put,
   UseInterceptors,
   ClassSerializerInterceptor,
   ForbiddenException,
@@ -28,8 +27,6 @@ export class UsersController {
   @Get()
   @UseGuards(AuthGuard('jwt'))
   findOne(@GetUser() user: User) {
-    console.log(user);
-
     return this.usersService.findOne(user.id);
   }
 
@@ -40,8 +37,6 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
     @GetUser() user: User,
   ): Promise<User> {
-    console.log("USER ID", user.id);
-    console.log("ID", id);
 
     return this.usersService.update(user.id, +id, updateUserDto);
   }
@@ -54,18 +49,4 @@ export class UsersController {
 
     return this.usersService.deleteUser(+userId);
   }
-
-  // @Delete(':id')
-  // @UseGuards(AuthGuard('jwt'))
-  // deleteUser(@Param('id') id: number, @GetUser() user: User) {
-  //   console.log(user);
-
-  //   // Valider si l'utilisateur connecté a le droit de supprimer ce compte
-  //   if (user.id !== id) {
-  //     throw new ForbiddenException(
-  //       'Vous n’avez pas les droits pour supprimer ce compte.',
-  //     );
-  //   }
-  //   return this.usersService.deleteUser(id);
-  // }
 }

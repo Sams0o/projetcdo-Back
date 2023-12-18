@@ -12,7 +12,7 @@ export class Experience {
   @Column({ nullable: false })
   title: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   description: string;
 
   @Column({ nullable: false })

@@ -38,14 +38,11 @@ export class AuthService {
       password: hashedPassword,
       admin: false,
     });
-    console.log('test sauvegarde user', user);
 
     try {
-      console.log('user', user);
       // enregistrement de l'entité user
       const createdUser = await this.usersRepository.save(user);
       delete createdUser.password;
-      console.log('oooooo', createdUser);
       return createdUser;
     } catch (error) {
       // gestion des erreurs
@@ -62,7 +59,7 @@ export class AuthService {
     const user = await this.usersRepository.findOneBy({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload = { email };
+      const payload = { email, id: user.id};
       const accessToken = await this.jwtService.sign(payload);
       return { accessToken };
     } else {
@@ -74,7 +71,7 @@ export class AuthService {
     const userDetails = await this.usersRepository.findOne({
       where: { id: userId },
     });
-    delete userDetails.admin;
+    // delete userDetails.admin;
     delete userDetails.password;
     delete userDetails.id;
     return userDetails;

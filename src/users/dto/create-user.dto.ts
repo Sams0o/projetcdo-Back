@@ -18,7 +18,6 @@ export class CreateUserDto {
   pseudo: string;
 
   @ApiProperty()
-  @IsNotEmpty()
   @IsString()
   biography: string;
 

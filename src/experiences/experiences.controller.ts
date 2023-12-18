@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { ExperiencesService } from './experiences.service';
 import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
@@ -25,8 +34,6 @@ export class ExperiencesController {
   @Get() //Recherche toutes les expériences associés à l'utilisateur connecté
   @UseGuards(AuthGuard('jwt'))
   findExperienceByIdUser(@GetUser() user: User): Promise<Experience[]> {
-    console.log('User', user);
-
     return this.experiencesService.findExperienceByIdUser(user.id);
   }
 

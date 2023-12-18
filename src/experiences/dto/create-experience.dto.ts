@@ -13,6 +13,7 @@ export class CreateExperienceDto {
   title: string;
 
   @ApiProperty()
+  @IsNotEmpty()
   @IsString()
   description: string;
 
@@ -20,11 +21,6 @@ export class CreateExperienceDto {
   @IsNotEmpty()
   @IsString()
   city: string;
-
-  // @ApiProperty()
-  // @IsNotEmpty()
-  // @IsISO8601({ strict: true })
-  // publication_date: Date;
 
   @ApiProperty()
   @IsNotEmpty()
